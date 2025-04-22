@@ -1,20 +1,25 @@
-# Используем официальный образ Python
 FROM python:3.10-slim
+
+# Создаем нового пользователя (без root)
+RUN useradd -m appuser
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы проекта
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Устанавливаем зависимости прямо здесь
+RUN pip install --no-cache-dir flask flask_sqlalchemy psycopg2-binary gunicorn
 
-COPY app/ ./app
+# Копируем все файлы проекта внутрь контейнера
+COPY . .
 
-# Указываем рабочую директорию приложения
-WORKDIR /app/app
+# Меняем владельца файлов, чтобы не было проблем с правами
+RUN chown -R appuser:appuser /app
+
+# Переключаемся на созданного пользователя
+USER appuser
 
 # Открываем нужный порт
 EXPOSE 5000
 
-# Команда для запуска
+# Запускаем приложение
 CMD ["python", "app.py"]
