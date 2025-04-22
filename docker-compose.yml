@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    container_name: best-devops-web
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/mydatabase
+    depends_on:
+      - db
+    networks:
+      - devops_network
+
+  db:
+    image: postgres:13
+    container_name: best-devops-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - devops_network
+
+networks:
+  devops_network:
+
+volumes:
+  db_data:
