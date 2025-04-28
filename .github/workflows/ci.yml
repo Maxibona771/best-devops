@@ -28,10 +28,10 @@ jobs:
         run: docker run -d -p 5000:5000 --name myapp best-devops-app
 
       - name: Wait for the app to be ready
-        run: sleep 5
+        run: sleep 10  # Увеличил время ожидания
 
       - name: Check if Flask app is responding
-        run: curl -f http://localhost:5000
+        run: curl -f http://localhost:5000 || exit 1  # Если не доступен, завершится с ошибкой
 
       - name: Show running containers
         run: docker ps
