@@ -1,4 +1,4 @@
-name: CI - Build and Check App
+name: CI - Build and Check Flask App
 
 on:
   push:
@@ -16,14 +16,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Compose
+      - name: Set up Docker
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker-compose
+          sudo apt-get install -y docker.io
 
-      - name: Build and Run Containers
-        run: |
-          docker-compose up -d --build
+      - name: Build Docker image
+        run: docker build -t best-devops-app .
+
+      - name: Run Docker container
+        run: docker run -d -p 5000:5000 --name myapp best-devops-app
 
       - name: Wait for the app to be ready
         run: sleep 5
@@ -31,9 +33,9 @@ jobs:
       - name: Check if Flask app is responding
         run: curl -f http://localhost:5000
 
-      - name: Show running containers (for debug)
+      - name: Show running containers
         run: docker ps
 
-      - name: Show logs (if needed)
+      - name: Show container logs if test failed
         if: failure()
-        run: docker logs $(docker ps -q)
+        run: docker logs myapp
