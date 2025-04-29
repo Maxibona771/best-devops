@@ -28,4 +28,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: best-devops-app:latest
+          tags: maxibona771/best-devops-app:latest
